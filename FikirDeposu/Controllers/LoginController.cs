@@ -13,17 +13,23 @@ namespace FikirDeposu.Controllers
         Context db = new Context();
         public string UserLogin(string email,string password)
         {
-            string testEmail = "f";
-            string testPass = "1";
-            if(email==testEmail && testPass == password)
+            UserDetails user = db.UserDetails.Where(x => x.email == email && x.password == password).SingleOrDefault();
+            if (user != null)
             {
-                return "successLogin";
+                if (user.isActive == true)
+                {
+                    return "successLogin";
+                }
+                else
+                {
+                    return "hata";
+
+                }
             }
             else
             {
                 return "hata";
             }
-
         }
 
         public string UserRegister(UserDetails user)
@@ -33,7 +39,7 @@ namespace FikirDeposu.Controllers
             string confirmationGuid = Guid.NewGuid().ToString();
             string verifyUrl = System.Web.HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) +
                                "/Account/Verify?Id=" +
-                               confirmationGuid;
+                               confirmationGuid+"?email="+user.email;
 
             string bodyMessage = string.Format("üyeliğiniz başarıyla oluşturulmuştur. Aşağıdaki linke tıkladığınızda hesabınızın aktif olacaktır.\n");
             bodyMessage += verifyUrl;
@@ -46,6 +52,9 @@ namespace FikirDeposu.Controllers
             Email.EmailSender("FikirDeposu Register Subject",bodyMessage, user.email);
             return "success";
         }
+
+       
+        
 
     }
 }

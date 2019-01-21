@@ -32,7 +32,7 @@ namespace FikirDeposu.SettingsClass
                email.From = new MailAddress(gonderenEposta);
                email.To.Add(sendEmail);
                email.Subject = subject;
-                email.Body = message;
+               email.Body = message;
 
                 smtp.Send(email);
                 return true;
