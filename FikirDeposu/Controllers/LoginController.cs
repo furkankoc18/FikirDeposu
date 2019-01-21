@@ -1,4 +1,5 @@
 ﻿using FikirDeposu.Models;
+using FikirDeposu.SettingsClass;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,8 @@ namespace FikirDeposu.Controllers
             user.isActive = false;
             db.UserDetails.Add(user);
             db.SaveChanges();
-            return "";
+            Email.EmailSender("FikirDeposu Register Subject", "testMaili", user.email);
+            return "success";
         }
 
     }

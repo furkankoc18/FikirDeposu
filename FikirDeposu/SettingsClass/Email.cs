@@ -6,13 +6,13 @@ using System.Web;
 
 namespace FikirDeposu.SettingsClass
 {
-    public class Eposta
+    public class Email
     {
-        public static bool Gonder(string konu, string mesaj, string gidecekEposta)
+        public static bool EmailSender(string subject, string message, string sendEmail)
         {
             try
             {
-                MailMessage eposta = new MailMessage();
+                MailMessage email = new MailMessage();
                 SmtpClient smtp = new SmtpClient();
 
                 string gonderenEposta = "info@abdullahfurkankoc.com";
@@ -21,15 +21,15 @@ namespace FikirDeposu.SettingsClass
                 smtp.Credentials = new System.Net.NetworkCredential(gonderenEposta, gonderenSifre);
                 smtp.Port = 587;
                 smtp.Host = "mail.abdullahfurkankoc.com";
-                smtp.EnableSsl = false;
+                smtp.EnableSsl = true;
 
-                eposta.IsBodyHtml = true;
-                eposta.From = new MailAddress(gonderenEposta);
-                eposta.To.Add(gidecekEposta);
-                eposta.Subject = konu;
-                eposta.Body = mesaj;
+               email.IsBodyHtml = true;
+               email.From = new MailAddress(gonderenEposta);
+               email.To.Add(sendEmail);
+               email.Subject = subject;
+                email.Body = message;
 
-                smtp.Send(eposta);
+                smtp.Send(email);
                 return true;
             }
             catch (Exception)
