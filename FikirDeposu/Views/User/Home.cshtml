@@ -1,7 +1,32 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Home";
 }
 
-<h2>Home</h2>
+<div class="container" ng-app="HomeApp" ng-controller="HomeController">
+    <div class="row">
+            <h2>Anasayfa</h2>
+        {{loggedInUser.name}}
+    </div>
+</div>
+<script src="~/scripts/angular.min.js"></script>
 
+<script>
+    var app = angular.module('HomeApp', []);
+    app.controller('HomeController', ['$scope', '$http', function ($scope,$http) {
+        var rootRedirectUrl = 'http://localhost:44041';
+
+        $http.get('/Account/FirstVerify').then(successCallback, errorCallback);
+
+        function successCallback(response) {
+            if (response.status == 200) {
+                $scope.loggedInUser = response.data;
+                console.log(response)
+            }
+           
+        }
+        function errorCallback(error) {
+            console.log(error + "Hata ");
+        }
+
+    }])
+</script>
