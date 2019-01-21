@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
 using System.Web;
 
@@ -15,13 +16,17 @@ namespace FikirDeposu.SettingsClass
                 MailMessage email = new MailMessage();
                 SmtpClient smtp = new SmtpClient();
 
-                string gonderenEposta = "info@abdullahfurkankoc.com";
-                string gonderenSifre = "Furkan1996";
+                string gonderenEposta = "info@abdullahfurkankoc.com";// "abdullahfurkan.koc@gmail.com"; //
+                string gonderenSifre = "Furkan1996"; //"19961903";//;
 
-                smtp.Credentials = new System.Net.NetworkCredential(gonderenEposta, gonderenSifre);
-                smtp.Port = 587;
-                smtp.Host = "mail.abdullahfurkankoc.com";
-                smtp.EnableSsl = true;
+              //  smtp.Credentials = new System.Net.NetworkCredential(gonderenEposta, gonderenSifre);
+                smtp.Port = 587;// 587;
+                smtp.Host = "smtp.abdullahfurkankoc.com";//"smtp.gmail.com";//;
+                //smtp.EnableSsl = true;
+
+                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtp.UseDefaultCredentials = false;
+                smtp.Credentials = new NetworkCredential(gonderenEposta, gonderenSifre);
 
                email.IsBodyHtml = true;
                email.From = new MailAddress(gonderenEposta);

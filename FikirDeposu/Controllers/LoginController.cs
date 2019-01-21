@@ -13,7 +13,7 @@ namespace FikirDeposu.Controllers
         Context db = new Context();
         public string UserLogin(string email,string password)
         {
-            string testEmail = "furkan@gmail.com";
+            string testEmail = "f";
             string testPass = "1";
             if(email==testEmail && testPass == password)
             {
@@ -22,18 +22,28 @@ namespace FikirDeposu.Controllers
             else
             {
                 return "hata";
-                //Yanlış Şifre
             }
 
         }
 
         public string UserRegister(UserDetails user)
         {
+
+
+            string confirmationGuid = Guid.NewGuid().ToString();
+            string verifyUrl = System.Web.HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) +
+                               "/Account/Verify?Id=" +
+                               confirmationGuid;
+
+            string bodyMessage = string.Format("üyeliğiniz başarıyla oluşturulmuştur. Aşağıdaki linke tıkladığınızda hesabınızın aktif olacaktır.\n");
+            bodyMessage += verifyUrl;
+
+
             user.registerDate = DateTime.Now;
             user.isActive = false;
             db.UserDetails.Add(user);
             db.SaveChanges();
-            Email.EmailSender("FikirDeposu Register Subject", "testMaili", user.email);
+            Email.EmailSender("FikirDeposu Register Subject",bodyMessage, user.email);
             return "success";
         }
 
