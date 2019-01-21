@@ -30,7 +30,7 @@
         <div class="sticky-header header-section ">
             <div class="header-left">
                 <div class="logo">
-                    <a href="index.html"><h1>Fikir Deposu</h1></a>
+                    <a href="#"><h1>Fikir Deposu</h1></a>
                 </div>
                 <div class="clearfix"> </div>
             </div>
@@ -43,7 +43,7 @@
             <div class="main-page">
                 <div class="login-form">
                     <div class="alert alert-danger h4" ng-show="errorUserLogin">
-                        Hata
+                        Lütfen şifrenizi ve eposta adresinizi kontrol ediniz!
                     </div>
                     <h4>Giriş</h4>
                     <h5><strong>Hoşgeldiniz</strong> Başlamak için giriş yapınız</h5>
@@ -76,6 +76,7 @@
 
 
         app.controller('loginController', ['$scope', '$http', function ($scope, $http) {
+            var rootRedirectUrl = 'http://localhost:44041';
             $scope.errorUserLogin = false;
 
             $scope.userLogin = function () {
@@ -88,6 +89,8 @@
                     }
                     else {
                         $scope.errorUserLogin = false;
+                        var redirectUrl = rootRedirectUrl+'/User/Home';
+                        window.location.href = redirectUrl;
                     }
                 }
                 function errorCallback(error) {
