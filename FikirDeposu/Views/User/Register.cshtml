@@ -1,0 +1,97 @@
+﻿
+@{
+    ViewBag.Title = "Register";
+    Layout = null;
+}
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Kayıt Ol</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <link href="/Content/web/css/bootstrap.css" rel='stylesheet' type='text/css' />
+    <link href="/Content/web/css/style.css" rel='stylesheet' type='text/css' />
+    <link rel="icon" href="/Content/web/favicon.ico" type="image/x-icon">
+    <link href="/Content/web/css/font-awesome.css" rel="stylesheet">
+    <script src="/Content/web/js/jquery-1.11.1.min.js"></script>
+    <script src="/Content/web/js/modernizr.custom.js"></script>
+    <link href='~/Content/web/google1.css' rel='stylesheet' type='text/css'>
+    <link href='~/Content/web/google2.css' rel='stylesheet' type='text/css'>
+    <script src="/Content/web/js/metisMenu.min.js"></script>
+    <script src="/Content/web/js/custom.js"></script>
+    <link href="/Content/web/css/custom.css" rel="stylesheet">
+    <script src="~/scripts/angular.min.js"></script>
+</head>
+<body class="cbp-spmenu-push" ng-app="RegisterApp">
+    <div class="main-content">
+        <div class="sticky-header header-section ">
+            <div class="header-left">
+                <div class="logo">
+                    <a href="index.html"><h1>Fikir Deposu</h1></a>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+        <div id="page-wrapper">
+            <div class="main-page">
+                <div class="sign-form" ng-controller="registerController">
+                  
+                    <h4>Kayıt Ol</h4>
+                    <h5><strong>Hesap</strong> oluştur</h5>
+                    <form ng-submit="registerUser()">
+                        <input type="text" placeholder="Ad" ng-model="newUser.name" required>
+                        <input type="text" class="pass" placeholder="Soyad"  ng-model="newUser.surname" required>
+                        <input type="text" class="pass" placeholder="E-Posta" ng-model="newUser.email" required>
+                        
+                        <input type="password" placeholder="Şifre" ng-model="newUser.password" required>
+                        <input type="password" class="pass" placeholder="Şifreyi tekrar giriniz" ng-model="newUser.againPassword" required>
+                        <div class="alert alert-danger h4" ng-show="!(newUser.password==newUser.againPassword)">
+                            Lütfen şifreleri aynı giriniz
+                        </div>
+                        <input class="btn btn-info btn-block" type="submit" ng-disabled="(newUser.password!=newUser.againPassword)" value="Kayıt Ol"/>
+                        <p class="center-block mg-t mg-b text-center">Hesabınız Var mı?</p>
+                    </form>
+                    <a href="@Url.Action("Login","User")" class="button1"><button class="btn btn-info btn-block" type="submit">Giriş Sayfası</button></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="copy-section">
+            <p>&copy; 2019 Fikir Deposu. All rights reserved | Design by <a href="http://abdullahfurkankoc.com">Furkan KOÇ</a></p>
+        </div>
+    </div>
+    <script src="/Content/web/js/classie.js"></script>
+    <script type="text/javascript" src="/Content/web/js/bootstrap.min.js"></script>
+    <script src="/Content/web/js/jquery.nicescroll.js"></script>
+    <script src="/Content/web/js/scripts.js"></script>
+    <script type="text/javascript" src="/Content/web/js/jquery.jqcandlestick.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/Content/web/css/jqcandlestick.css" />
+
+    <script>
+        var app = angular.module('RegisterApp', []);
+        app.controller('registerController', ['$scope', '$http', function ($scope, $http) {
+            $scope.registerUser = function () {
+
+                if ($scope.newUser.password == $scope.newUser.againPassword) {
+                    var data = { name: $scope.newUser.name, surname: $scope.newUser.surname, email: $scope.newUser.email, password: $scope.newUser.password }
+                    $http.post('/Login/UserRegister',data).then(successCallback, errorCallback);
+
+                    function successCallback(response) {
+                       
+                    }
+                    function errorCallback(error) {
+                        console.log(error + "Kullanıcı Kayıtta Hata ");
+                    }
+                }
+                else {
+                    
+                }
+            }
+        }])
+    </script>
+
+
+</body>
+</html>

@@ -9,6 +9,7 @@ namespace FikirDeposu.Controllers
 {
     public class LoginController : Controller
     {
+        Context db = new Context();
         public string UserLogin(string email,string password)
         {
             string testEmail = "furkan@gmail.com";
@@ -23,6 +24,15 @@ namespace FikirDeposu.Controllers
                 //Yanlış Şifre
             }
 
+        }
+
+        public string UserRegister(UserDetails user)
+        {
+            user.registerDate = DateTime.Now;
+            user.isActive = false;
+            db.UserDetails.Add(user);
+            db.SaveChanges();
+            return "";
         }
 
     }
