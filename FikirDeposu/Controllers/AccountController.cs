@@ -15,25 +15,42 @@ namespace FikirDeposu.Controllers
 
         public ActionResult Verify(string id)
         {
-            string[] emailSplit = id.Split('=');
-            string email = emailSplit[1];
-
-            UserDetails user = db.UserDetails.Where(x => x.email == email).SingleOrDefault();
-            if (user != null)
+            if (id == null)
             {
-                user.isActive = true;
-                db.SaveChanges();
-                Session["loggedInUser"] = user;
-                return RedirectToAction("Home","User");
+                return RedirectToAction("Login", "User");
+            }else
+            {
+                string[] emailSplit = id.Split('=');
+                string email = emailSplit[1];
+
+                UserDetails user = db.UserDetails.Where(x => x.email == email).SingleOrDefault();
+                if (user != null)
+                {
+                    user.isActive = true;
+                    db.SaveChanges();
+                    Session["firstLoggedInUser"] = user;
+                    Session["loggedInUser"] = null;
+                    return RedirectToAction("Home", "User");
+                }
+                else
+                {
+                    return null;
+                }
+            }
+           
+        }
+
+        public JsonResult FirstVerify()
+        {
+            UserDetails user;
+            if (Session["loggedInUser"] != null)
+            {
+                user = (UserDetails)Session["loggedInUser"];
             }
             else
             {
-                return null;
+                user = (UserDetails)Session["firstLoggedInUser"];
             }
-        }
-        public JsonResult FirstVerify()
-        {
-            UserDetails user = (UserDetails)Session["loggedInUser"];
             return Json(user, JsonRequestBehavior.AllowGet);
         }
 
@@ -42,17 +59,24 @@ namespace FikirDeposu.Controllers
             UserDetails user = db.UserDetails.Where(x => x.email == forgotEmail).SingleOrDefault();
             if (user != null)
             {
-                string confirmationGuid = Guid.NewGuid().ToString();
-                string forgotUrl = System.Web.HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) +
-                                   "/Account/Forgot?Id=" +
-                                   confirmationGuid + "?email=" + user.email;
+                if (user.isActive == false)
+                {
+                    return "activeFalse";
+                }else
+                {
+                    string confirmationGuid = Guid.NewGuid().ToString();
+                    string forgotUrl = System.Web.HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) +
+                                       "/Account/Forgot?Id=" +
+                                       confirmationGuid + "?email=" + user.email;
 
-                string bodyMessage = string.Format("Şifreyi sıfırlarmak için aşağıdaki linke tıklayınız\n");
-                bodyMessage += forgotUrl;
+                    string bodyMessage = string.Format("Şifreyi sıfırlarmak için aşağıdaki linke tıklayınız\n");
+                    bodyMessage += forgotUrl;
 
 
-                Email.EmailSender("FikirDeposu forgot Subject", bodyMessage, forgotEmail);
-                return "success";
+                    Email.EmailSender("FikirDeposu forgot Subject", bodyMessage, forgotEmail);
+                    return "success";
+                }
+               
             }
             else
             {
@@ -60,12 +84,10 @@ namespace FikirDeposu.Controllers
 
             }
         }
-        string forgotEmail;
         public ActionResult Forgot(string id)
         {
             string[] emailSplit = id.Split('=');
             string email = emailSplit[1];
-            forgotEmail = email;
             UserDetails user = db.UserDetails.Where(x => x.email == email).SingleOrDefault();
             if (user != null)
             {
