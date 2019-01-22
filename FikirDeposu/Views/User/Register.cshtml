@@ -28,7 +28,7 @@
         <div class="sticky-header header-section ">
             <div class="header-left">
                 <div class="logo">
-                    <a href="index.html"><h1>Fikir Deposu</h1></a>
+                    <a href="#"><h1>Fikir Deposu</h1></a>
                 </div>
                 <div class="clearfix"> </div>
             </div>
@@ -37,6 +37,9 @@
         <div id="page-wrapper">
             <div class="main-page">
                 <div class="sign-form" ng-controller="registerController">
+                   <div class="alert alert-danger h4" ng-show="isUserRegisterError">
+                       Bu E-Posta adresine sahip kullanıcı mevcuttur!!!
+                   </div>
                   <div class="alert alert-success h4" ng-show="isRegister">
                       Başarılı bir şekilde kayıt oluşturuldu. Lütfen E-Posta adresinizi kontrol ediniz
                   </div>
@@ -72,6 +75,7 @@
         var app = angular.module('RegisterApp', []);
         app.controller('registerController', ['$scope', '$http', function ($scope, $http) {
             $scope.isRegister = false;
+            $scope.isUserRegisterError = false;
             $scope.registerUser = function () {
 
                 if ($scope.newUser.password == $scope.newUser.againPassword) {
@@ -79,10 +83,13 @@
 
                     $http.post('/Login/UserRegister', data).then(successCallback, errorCallback);
                     function successCallback(response) {
-                        if(response.data=="success")
+                        if(response.data=="success"){
                             $scope.isRegister = true;
-                        else {
+                            $scope.isUserRegisterError = false;
+                        }
+                        else if (response.data=="error"){
                             $scope.isRegister = false;
+                            $scope.isUserRegisterError = true;
                         }
                     }
                     function errorCallback(error) {

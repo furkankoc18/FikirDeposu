@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FikirDeposu.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -29,6 +30,9 @@ namespace FikirDeposu.Controllers
 
         public ActionResult ResetPassword()
         {
+            UserDetails user = (UserDetails)Session["updateUserPassword"];
+            if (user == null)
+                return RedirectToAction("Login", "User");
             return View();
         }
     }
