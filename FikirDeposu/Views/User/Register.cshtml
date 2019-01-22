@@ -81,7 +81,7 @@
                 if ($scope.newUser.password == $scope.newUser.againPassword) {
                     var data = { name: $scope.newUser.name, surname: $scope.newUser.surname, email: $scope.newUser.email, password: $scope.newUser.password }
 
-                    $http.post('/Login/UserRegister', data).then(successCallback, errorCallback);
+                    $http.post('/Account/CreateAccount', data).then(successCallback, errorCallback);
                     function successCallback(response) {
                         if(response.data=="success"){
                             $scope.isRegister = true;

@@ -34,33 +34,7 @@ namespace FikirDeposu.Controllers
             }
         }
 
-        public string UserRegister(UserDetails user)
-        {
-            UserDetails userDb = db.UserDetails.Where(x => x.email == user.email).SingleOrDefault();
-            if (userDb != null)
-            {
-                //bu mail adresinde kullanıcı var
-                return "error";
-            }else
-            {
-                string confirmationGuid = Guid.NewGuid().ToString();
-                string verifyUrl = System.Web.HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) +
-                                   "/Account/Verify?Id=" +
-                                   confirmationGuid + "?email=" + user.email;
-
-                string bodyMessage = string.Format("Üyeliğiniz başarıyla oluşturulmuştur. Aşağıdaki linke tıkladığınızda hesabınızın aktif olacaktır.\n");
-                bodyMessage += verifyUrl;
-
-
-                user.registerDate = DateTime.Now;
-                user.isActive = false;
-                db.UserDetails.Add(user);
-                db.SaveChanges();
-                Email.EmailSender("FikirDeposu Register Subject", bodyMessage, user.email);
-                return "success";
-            }
-
-        }
+        
 
        
         

@@ -2,30 +2,56 @@
     ViewBag.Title = "Home";
 }
 
-<div class="container" ng-app="HomeApp" ng-controller="HomeController">
-    <div class="row">
-            <h2>Anasayfa</h2>
-        {{loggedInUser.name}}
-    </div>
-</div>
+        <div class="bottom-table"  ng-app="HomeApp" ng-controller="HomeController">
+            <div class="bs-docs-example">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Fikir No</th>
+                            <th>Fikir Adı</th>
+                            <th>Fikir Tarih</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="idea in ideas">
+                            <td>{{idea.number}}</td>
+                            <td>{{idea.name}}</td>
+                            <td>{{idea.ideaDate  | date:"dd/MM/yyyy '-' h:mma" }}</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
 <script src="~/scripts/angular.min.js"></script>
 
 <script>
     var app = angular.module('HomeApp', []);
     app.controller('HomeController', ['$scope', '$http', function ($scope,$http) {
         var rootRedirectUrl = 'http://localhost:44041';
+        var ideas = [];
 
-        $http.get('/Account/FirstVerify').then(successCallback, errorCallback);
-
+        $http.get('/Account/GetLoggedInUser').then(successCallback, errorCallback);
         function successCallback(response) {
             if (response.status == 200) {
                 $scope.loggedInUser = response.data;
             }
-           
         }
         function errorCallback(error) {
             console.log(error + "Hata ");
         }
+
+        $http.get('/User/GetIdeas').then(successCallback2, errorCallback2);
+        function successCallback2(response) {
+            ideas = response.data;
+            $scope.ideas = JSON.parse(ideas);
+        }
+        function errorCallback2(response) {
+
+        }
+    
 
     }])
 </script>
