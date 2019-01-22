@@ -25,13 +25,13 @@
                     <div class="scrollbar scrollbar1">
                         <ul class="nav" id="side-menu">
                             <li>
-                                <a href="#"><i class="fa fa-home nav_icon"></i>Anasayfa</a>
+                                <a href="@Url.Action("Home","User")"><i class="fa fa-home nav_icon"></i>Anasayfa</a>
                             </li>
                             <li>
                                 <a href="#"><i class="fa fa-lightbulb-o nav_icon"></i>Fikirler <span class="fa arrow"></span></a>
                                 <ul class="nav nav-second-level collapse">
                                     <li>
-                                        <a href="gallery.html">Fikir Ekle</a>
+                                        <a href="@Url.Action("IdeaAdd", "Idea")">Fikir Ekle</a>
                                     </li>
                                     <li>
                                         <a href="grid.html">Grid</a>
@@ -49,7 +49,7 @@
         <div class="sticky-header header-section ">
             <div class="header-left">
                 <div class="logo">
-                    <a href="#"><h1>Fikir Deposu</h1></a>
+                    <a href="@Url.Action("Home","User")"><h1>Fikir Deposu</h1></a>
                 </div>
                 <div class="user-right">
                     <div class="profile_details_left">
@@ -171,7 +171,7 @@
             <div class="header-right">
                 <div class="search-box">
                     <form class="input">
-                        <input class="sb-search-input input__field--madoka" placeholder="Search..." type="search" id="input-31">
+                        <input class="sb-search-input input__field--madoka" placeholder="Arama..." type="search" id="input-31">
                     </form>
                 </div>
                 <button id="showLeftPush"><i class="fa fa-bars"></i></button>

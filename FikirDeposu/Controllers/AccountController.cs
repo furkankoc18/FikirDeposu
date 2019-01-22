@@ -12,7 +12,34 @@ namespace FikirDeposu.Controllers
     {
         Context db = new Context();
 
+        public string CreateAccount(UserDetails user)
+        {
+            UserDetails userDb = db.UserDetails.Where(x => x.email == user.email).SingleOrDefault();
+            if (userDb != null)
+            {
+                //bu mail adresinde kullanıcı var
+                return "error";
+            }
+            else
+            {
+                string confirmationGuid = Guid.NewGuid().ToString();
+                string verifyUrl = System.Web.HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) +
+                                   "/Account/Verify?Id=" +
+                                   confirmationGuid + "?email=" + user.email;
 
+                string bodyMessage = string.Format("Üyeliğiniz başarıyla oluşturulmuştur. Aşağıdaki linke tıkladığınızda hesabınızın aktif olacaktır.\n");
+                bodyMessage += verifyUrl;
+
+
+                user.registerDate = DateTime.Now;
+                user.isActive = false;
+                db.UserDetails.Add(user);
+                db.SaveChanges();
+                Email.EmailSender("FikirDeposu Register Subject", bodyMessage, user.email);
+                return "success";
+            }
+
+        }
         public ActionResult Verify(string id)
         {
             if (id == null)
@@ -40,7 +67,7 @@ namespace FikirDeposu.Controllers
            
         }
 
-        public JsonResult FirstVerify()
+        public JsonResult GetLoggedInUser()
         {
             UserDetails user;
             if (Session["loggedInUser"] != null)
@@ -51,7 +78,15 @@ namespace FikirDeposu.Controllers
             {
                 user = (UserDetails)Session["firstLoggedInUser"];
             }
-            return Json(user, JsonRequestBehavior.AllowGet);
+
+            UserPojo postUser = new UserPojo();
+                postUser.isActive = user.isActive;
+                postUser.name = user.name;
+                postUser.surname = user.surname;
+                postUser.registerDate = user.registerDate;
+                postUser.password = user.password;
+                postUser.userID = user.userID;
+            return Json(postUser, JsonRequestBehavior.AllowGet);
         }
 
         public string UserResetPassword(string forgotEmail)
@@ -76,12 +111,10 @@ namespace FikirDeposu.Controllers
                     Email.EmailSender("FikirDeposu forgot Subject", bodyMessage, forgotEmail);
                     return "success";
                 }
-               
             }
             else
             {
                 return "error";
-
             }
         }
         public ActionResult Forgot(string id)

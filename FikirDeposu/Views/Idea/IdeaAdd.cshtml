@@ -1,0 +1,81 @@
+﻿
+@{
+    ViewBag.Title = "IdeaAdd";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+        <div class="col-md-12 form-grid" ng-app="IdeaAddApp" ng-controller="IdeaAddController">
+            <div class="form-grid1">
+                <h4><span>Fikir Ekleme</span></h4>
+                <form ng-submit="ideaAdd()">
+                    <div class="alert alert-success h4" ng-show="isSuccessIdeaAdd">
+                        Fikir başarılı kaydedildi
+                    </div>
+                    <div class="bottom-form">
+                        <div class="col-md-3 grid-form">
+                            <h5>Fikir Adı:</h5>
+                        </div>
+                        <div class="col-md-9 grid-form1">
+                            <input type="text" placeholder="Fikir Adı" required ng-model="newIdea.name">
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="bottom-form">
+                        <div class="col-md-3 grid-form">
+                            <h5>Fikir Açıklaması:</h5>
+                        </div>
+                        <div class="col-md-9 grid-form1">
+                            <textarea placeholder="Açıklama" required ng-model="newIdea.description"></textarea>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="bottom-form">
+                        <div class="col-md-3 grid-form">
+                            <h5>Fikir Durumu:</h5>
+                        </div>
+                        <div class="col-md-9 grid-form1">
+                            <div class="radio-inline"><label><input name="status" value="public" type="radio"> Public</label></div>
+                            <div class="radio-inline"><label><input name="status" value="private" type="radio" checked="checked"> Private</label></div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="bottom-form">
+                        <div class="col-md-3 grid-form">
+                        </div>
+                        <div class="col-md-9 grid-form1">
+                            <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-angle-right"></i> Kaydet</button>
+                            <button type="reset" class="btn btn-sm btn-warning"><i class="fa fa-repeat"></i> Reset</button>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+   <script src="~/scripts/angular.min.js"></script>
+<script>
+    var app = angular.module('IdeaAddApp', []);
+    app.controller('IdeaAddController', ['$scope', '$http', function ($scope, $http) {
+        $scope.isSuccessIdeaAdd = false;
+        
+        $scope.ideaAdd = function () {
+            var statusElement = document.getElementsByName('status');
+            if (statusElement[0].checked)
+                $scope.status = "public";
+            else
+                $scope.status = "private";
+            var data = { name: $scope.newIdea.name, description: $scope.newIdea.description, status: $scope.status };
+
+            $http.post('/Idea/AddIdea', data).then(successCallback, errorCallback);
+
+            function successCallback(response) {
+                if (response.status == 200) {
+                    $scope.isSuccessIdeaAdd = true;
+                }
+            }
+
+            function errorCallback(error) {
+                console.log(error + "Hata ");
+            }
+        }
+
+    }])
+</script>
