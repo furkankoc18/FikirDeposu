@@ -36,5 +36,15 @@ namespace FikirDeposu.Controllers
             return "success";
         }
 
+        public string UpdateIdea(int ideaID,string name,string description,string status)
+        {
+            Ideas idea = db.Ideas.Where(x => x.ideaID == ideaID).SingleOrDefault();
+            idea.name = name;
+            idea.description = description;
+            idea.status = status;
+            db.SaveChanges();
+            return "success";
+        }
+
     }
 }

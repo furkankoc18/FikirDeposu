@@ -14,6 +14,7 @@ namespace FikirDeposu.Models
         public string description { get; set; }
         public string status { get; set; }
         public bool? isActive { get; set; }
+       // public bool? isRendered { get; set; }
         public DateTime? clasureDate { get; set; }
         public int? userID { get; set; }
     }

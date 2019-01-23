@@ -31,15 +31,74 @@
                 
                 <table ng-table="ideas" class="table table-condensed table-bordered">
                     <tr ng-repeat="row in $data">
-                        <td data-title="'Fikir No'" sortable="'number'">{{row.number}}</td>
-                        <td data-title="'Fikir Adı'" sortable="'name'">{{row.name}}</td>
-                        <td data-title="'Fikir Tarih'">{{row.ideaDate | date:"dd/MM/yyyy '-' h:mma"}}</td>
+                        <td align="center" data-title="'Fikir No'" sortable="'number'"><span >{{row.number}}</span></td>
+                        <td align="center" data-title="'Fikir Adı'" sortable="'name'"><span>{{row.name}}</span></td>
+                        <td align="center" data-title="'Fikir Tarih'"  sortable="'ideaDate'"><span>{{row.ideaDate | date:"dd/MM/yyyy '-' h:mma"}}</span></td>
+                        <td align="center" data-title="'İşlemler'">
+                            <button type="button" ng-click="editIdea(row)" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#updateModal"><i class="fa fa-edit"></i></button>
+                            <a class="btn btn-danger"  ng-click="closeIdea(row)" ng-show="row.userID==loggedInUser.userID"><i class="fa fa-trash-o fa-lg"></i></a>
+                        </td>
                     </tr>
                 </table>
-               
-
+            </div>
+            <div class="modal fade" id="updateModal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="alert alert-success h4" ng-show="isUpdateSuccess">
+                            Fikir güncellemesi başarılı
+                        </div>
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">{{modal.number}}</h4>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table">
+                                <tr>
+                                    <td>Fikir Adı:</td>
+                                   <td><input type="text" ng-model="modal.name" class="form-control" ></td>
+                                </tr>
+                                <tr>
+                                    <td>Açıklama:</td>
+                                    <td><input type="text" ng-model="modal.description" class="form-control" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Durumu</td>
+                                    <td>
+                                        <div class="radio-inline"><label><input name="editStatu" value="public" ng-click="editStatu('public')" type="radio">Public</label></div>
+                                        <div class="radio-inline"><label><input name="editStatu" value="private" ng-click="editStatu('private')" type="radio">Private</label></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Durumu:</td>
+                                    <td><input type="text" class="form-control" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Fikir Numarası:</td>
+                                    <td><input type="text" class="form-control" disabled ng-model="modal.number" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Fikir Açılış Tarihi:</td>
+                                    <td><input type="text" class="form-control" disabled value="{{modal.ideaDate}}" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Fikir Oluşturan Adı:</td>
+                                    <td><input type="text" class="form-control" disabled /></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td><button type="button" ng-click="updateIdea()" class="btn btn-primary">Güncelle</button></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
+
 
 <script src="~/scripts/angular.min.js"></script>
 <link href="~/Content/ng-table.min.css" rel="stylesheet">
@@ -52,6 +111,7 @@
     app.controller('HomeController', ['$scope', '$http', 'NgTableParams', function ($scope, $http, NgTableParams) {
         var rootRedirectUrl = 'http://localhost:44041';
         var ideas = [];
+        $scope.isUpdateSuccess = false;
 
         var listElement = document.getElementsByName('list');
         if (listElement[0].checked)
@@ -73,7 +133,6 @@
         function successCallback2(response) {
             ideas = response.data;
          $scope.ideas=  new NgTableParams({
-                // initial sort order
                 sorting: { name: "asc" }
             }, {
                 dataset: JSON.parse(ideas)
@@ -84,7 +143,14 @@
         }
     
         $scope.editIdea = function (idea) {
-            
+            $scope.isUpdateSuccess = false;
+            $scope.modal = idea;
+            if (idea.status == "public") {
+                document.getElementsByName("editStatu")[0].checked = true;
+            }
+            else {
+                document.getElementsByName("editStatu")[1].checked = true;
+            }
         }
 
         $scope.myList = function (type) {
@@ -95,16 +161,37 @@
             function successCallback(response) {
                 ideas = response.data;
                 $scope.ideas = new NgTableParams({
-                    // initial sort order
                     sorting: { name: "asc" }
                 }, {
                     dataset: JSON.parse(ideas)
                 });
+               
             }
             function errorCallback(error) {
                 console.log(error + "Hata ");
             }
         }
+        $scope.updateIdea = function () {
+            var data = { ideaID:$scope.modal.ideaID, name: $scope.modal.name, description: $scope.modal.description, status: $scope.modal.status }
 
+            $http.post('/Idea/UpdateIdea', data).then(successCallback, errorCallback);
+
+            function successCallback(response) {
+                if (response.data == "success") {
+                    $scope.isUpdateSuccess = true;
+                }
+            }
+            function errorCallback(error) {
+                console.log(error + "Hata3 ");
+            }
+        }
+
+        $scope.editStatu=function(type){
+          
+            if (type=="public")
+                $scope.modal.status = "public";
+            else
+                $scope.modal.status = "private";
+        }
     }])
 </script>
