@@ -60,5 +60,33 @@ namespace FikirDeposu.Controllers
             var json = JsonConvert.SerializeObject(ideasPojo);
             return Json(json,JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult GetUserIdeas(string type,UserDetails user)
+        {
+            if (type == "all")
+            {
+                return GetIdeas();
+            }else
+            {
+                List<IdeaPojo> ideasPojo = new List<IdeaPojo>();
+                List<Ideas> ideas = db.Ideas.Where(x => x.userID==user.userID).ToList();
+                foreach (var idea in ideas)
+                {
+                    IdeaPojo obj = new IdeaPojo();
+                    obj.ideaID = idea.ideaID;
+                    obj.name = idea.name;
+                    obj.isActive = idea.isActive;
+                    obj.ideaDate = idea.ideaDate;
+                    obj.description = idea.description;
+                    obj.clasureDate = idea.clasureDate;
+                    obj.number = idea.number;
+                    obj.userID = idea.userID;
+                    obj.status = idea.status;
+                    ideasPojo.Add(obj);
+                }
+                var json = JsonConvert.SerializeObject(ideasPojo);
+                return Json(json,JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }
