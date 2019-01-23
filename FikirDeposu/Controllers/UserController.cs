@@ -41,7 +41,7 @@ namespace FikirDeposu.Controllers
         public JsonResult GetIdeas()
         {
             List<IdeaPojo> ideasPojo = new List<IdeaPojo>();
-            List<Ideas> ideas = db.Ideas.Where(x=>x.status=="public").ToList();
+            List<Ideas> ideas = db.Ideas.Where(x=>x.status=="public" && x.isActive==true).ToList();
             foreach(var idea in ideas)
             {
                 IdeaPojo obj = new IdeaPojo();

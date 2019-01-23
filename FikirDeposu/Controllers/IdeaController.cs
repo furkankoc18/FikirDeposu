@@ -38,11 +38,19 @@ namespace FikirDeposu.Controllers
 
         public string UpdateIdea(int ideaID,string name,string description,string status)
         {
-            Ideas idea = db.Ideas.Where(x => x.ideaID == ideaID).SingleOrDefault();
+            Ideas idea = db.Ideas.Where(x => x.ideaID == ideaID && x.isActive==true).SingleOrDefault();
             idea.name = name;
             idea.description = description;
             idea.status = status;
             db.SaveChanges();
+            return "success";
+        }
+        public string CloseIdea(int ideaID)
+        {
+            Ideas idea = db.Ideas.Where(x => x.ideaID == ideaID).SingleOrDefault();
+            idea.isActive = false;
+            db.SaveChanges();
+
             return "success";
         }
 

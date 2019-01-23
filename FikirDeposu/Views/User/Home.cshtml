@@ -2,7 +2,10 @@
     ViewBag.Title = "Home";
 }
         <div class="bottom-table"  ng-app="HomeApp" ng-controller="HomeController as home">
-            <div class="bs-docs-example">
+           <div class="alert alert-danger h4" ng-show="isCloseIdea">
+               Fikir kapatma başarılı
+           </div>
+             <div class="bs-docs-example">
                 <div style="text-align:center">
                     <div class="radio-inline"><label><input name="list" value="My" ng-click="myList('my')" type="radio"> Bana ait</label></div>
                     <div class="radio-inline"><label><input name="list" value="All" ng-click="myList('all')" type="radio" checked> Tüm Fikirler</label></div>
@@ -108,11 +111,11 @@
 
   
 
-    app.controller('HomeController', ['$scope', '$http', 'NgTableParams', function ($scope, $http, NgTableParams) {
+    app.controller('HomeController', ['$scope', '$http', 'NgTableParams', '$timeout', function ($scope, $http, NgTableParams, $timeout) {
         var rootRedirectUrl = 'http://localhost:44041';
         var ideas = [];
         $scope.isUpdateSuccess = false;
-
+        $scope.isCloseIdea = false;
         var listElement = document.getElementsByName('list');
         if (listElement[0].checked)
             $scope.list = "my";
@@ -192,6 +195,23 @@
                 $scope.modal.status = "public";
             else
                 $scope.modal.status = "private";
+        }
+        $scope.closeIdea = function (idea) {
+            var data = { ideaID: idea.ideaID };
+
+            $http.post('/Idea/CloseIdea', data).then(successCallback, errorCallback);
+
+            function successCallback(response) {
+                $scope.isCloseIdea = true;
+                $timeout(function () {
+                    var redirectUrl = rootRedirectUrl + '/User/Home';
+                    window.location.href = redirectUrl;
+                }, 3000);
+            }
+
+            function errorCallback(error) {
+                console.log(error + "Hata4 ");
+            }
         }
     }])
 </script>
