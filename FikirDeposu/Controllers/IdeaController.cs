@@ -49,6 +49,7 @@ namespace FikirDeposu.Controllers
         {
             Ideas idea = db.Ideas.Where(x => x.ideaID == ideaID).SingleOrDefault();
             idea.isActive = false;
+            idea.clasureDate = DateTime.Now;
             db.SaveChanges();
 
             return "success";
