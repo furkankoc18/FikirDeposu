@@ -13,7 +13,6 @@ namespace FikirDeposu.Models
         }
 
         public virtual DbSet<Ideas> Ideas { get; set; }
-        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<UserDetails> UserDetails { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -28,6 +27,10 @@ namespace FikirDeposu.Models
 
             modelBuilder.Entity<Ideas>()
                 .Property(e => e.status)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Ideas>()
+                .Property(e => e._event)
                 .IsUnicode(false);
 
             modelBuilder.Entity<UserDetails>()

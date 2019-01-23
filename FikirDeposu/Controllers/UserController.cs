@@ -60,6 +60,7 @@ namespace FikirDeposu.Controllers
                 obj.number = idea.number;
                 obj.userID = idea.userID;
                 obj.status = idea.status;
+                obj._event = idea._event;
                 ideasPojo.Add(obj);
                 
             }
@@ -88,6 +89,7 @@ namespace FikirDeposu.Controllers
                     obj.number = idea.number;
                     obj.userID = idea.userID;
                     obj.status = idea.status;
+                    obj._event = idea._event;
                     ideasPojo.Add(obj);
                 }
                 var json = JsonConvert.SerializeObject(ideasPojo);
