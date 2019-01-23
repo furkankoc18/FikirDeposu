@@ -1,37 +1,63 @@
 ﻿@{
     ViewBag.Title = "Home";
 }
-
-        <div class="bottom-table"  ng-app="HomeApp" ng-controller="HomeController">
+        <div class="bottom-table"  ng-app="HomeApp" ng-controller="HomeController as home">
             <div class="bs-docs-example">
-                <table class="table table-hover">
+                <div style="text-align:center">
+                    <div class="radio-inline"><label><input name="list" value="My" ng-click="myList('my')" type="radio"> Bana ait</label></div>
+                    <div class="radio-inline"><label><input name="list" value="All" ng-click="myList('all')" type="radio" checked> Tüm Fikirler</label></div>
+                </div>
+                @*<table class="table table-hover">
                     <thead>
                         <tr>
                             <th>Fikir No</th>
                             <th>Fikir Adı</th>
                             <th>Fikir Tarih</th>
-                            <th>İşlem</th>
+                            <th>İşlemler</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="idea in ideas">
-                            <td>{{idea.number}}</td>
-                            <td>{{idea.name}}</td>
-                            <td>{{idea.ideaDate  | date:"dd/MM/yyyy '-' h:mma" }}</td>
-                            <td></td>
+                            <td scope="col">{{idea.number}}</td>
+                            <td scope="col">{{idea.name}}</td>
+                            <td scope="col">{{idea.ideaDate  | date:"dd/MM/yyyy '-' h:mma" }}</td>
+                            <td scope="col">
+                                <input type="button" ng-click="editIdea(idea)" value="Güncelle" class="btn btn-warning" />
+                                <input type="button" ng-click="closeIdea(idea)" ng-show="idea.userID==loggedInUser.userID" value="Kapat" class="btn btn-danger" />
+                            </td>
                         </tr>
                     </tbody>
+                </table>*@
+                
+                <table ng-table="ideas" class="table table-condensed table-bordered">
+                    <tr ng-repeat="row in $data">
+                        <td data-title="'Fikir No'" sortable="'number'">{{row.number}}</td>
+                        <td data-title="'Fikir Adı'" sortable="'name'">{{row.name}}</td>
+                        <td data-title="'Fikir Tarih'">{{row.ideaDate | date:"dd/MM/yyyy '-' h:mma"}}</td>
+                    </tr>
                 </table>
+               
+
             </div>
         </div>
 
 <script src="~/scripts/angular.min.js"></script>
-
+<link href="~/Content/ng-table.min.css" rel="stylesheet">
+<script src="~/Content/ng-table.min.js"></script>
 <script>
-    var app = angular.module('HomeApp', []);
-    app.controller('HomeController', ['$scope', '$http', function ($scope,$http) {
+    var app = angular.module('HomeApp', ["ngTable"]);
+
+  
+
+    app.controller('HomeController', ['$scope', '$http', 'NgTableParams', function ($scope, $http, NgTableParams) {
         var rootRedirectUrl = 'http://localhost:44041';
         var ideas = [];
+
+        var listElement = document.getElementsByName('list');
+        if (listElement[0].checked)
+            $scope.list = "my";
+        else
+            $scope.list = "all";
 
         $http.get('/Account/GetLoggedInUser').then(successCallback, errorCallback);
         function successCallback(response) {
@@ -46,12 +72,39 @@
         $http.get('/User/GetIdeas').then(successCallback2, errorCallback2);
         function successCallback2(response) {
             ideas = response.data;
-            $scope.ideas = JSON.parse(ideas);
+         $scope.ideas=  new NgTableParams({
+                // initial sort order
+                sorting: { name: "asc" }
+            }, {
+                dataset: JSON.parse(ideas)
+            });
         }
-        function errorCallback2(response) {
-
+        function errorCallback2(error) {
+            console.log(error + "Hata2");
         }
     
+        $scope.editIdea = function (idea) {
+            
+        }
+
+        $scope.myList = function (type) {
+
+            var data = {type:type,user:$scope.loggedInUser };
+
+            $http.post('/User/GetUserIdeas',data).then(successCallback, errorCallback);
+            function successCallback(response) {
+                ideas = response.data;
+                $scope.ideas = new NgTableParams({
+                    // initial sort order
+                    sorting: { name: "asc" }
+                }, {
+                    dataset: JSON.parse(ideas)
+                });
+            }
+            function errorCallback(error) {
+                console.log(error + "Hata ");
+            }
+        }
 
     }])
 </script>
