@@ -1,7 +1,7 @@
 ﻿@{
     ViewBag.Title = "Home";
 }
-        <div class="bottom-table"  ng-app="HomeApp" ng-controller="HomeController as home">
+        <div class="bottom-table"  ng-app="HomeApp" ng-controller="HomeController as home" ng-init="get()">
            <div class="alert alert-danger h4" ng-show="isCloseIdea">
                Fikir kapatma başarılı
            </div>
@@ -122,29 +122,36 @@
         else
             $scope.list = "all";
 
-        $http.get('/Account/GetLoggedInUser').then(successCallback, errorCallback);
-        function successCallback(response) {
-            if (response.status == 200) {
-                $scope.loggedInUser = response.data;
-            }
-        }
-        function errorCallback(error) {
-            console.log(error + "Hata ");
-        }
+        
+        $scope.get = function () {
 
-        $http.get('/User/GetIdeas').then(successCallback2, errorCallback2);
-        function successCallback2(response) {
-            ideas = response.data;
-         $scope.ideas=  new NgTableParams({
-                sorting: { name: "asc" }
-            }, {
-                dataset: JSON.parse(ideas)
-            });
+            $http.get('/Account/GetLoggedInUser').then(successCallback, errorCallback);
+            function successCallback(response) {
+                if (response.status == 200) {
+                    $scope.loggedInUser = response.data;
+
+                    $http.post('/User/GetIdeas', $scope.loggedInUser).then(successCallback2, errorCallback2);
+                    function successCallback2(response) {
+                        ideas = response.data;
+                        $scope.ideas = new NgTableParams({
+                            sorting: { name: "asc" }
+                        }, {
+                            dataset: JSON.parse(ideas)
+                        });
+                    }
+                    function errorCallback2(error) {
+                        console.log(error + "Hata2");
+                    }
+                }
+            }
+            function errorCallback(error) {
+                console.log(error + "Hata ");
+            }
+
+            
         }
-        function errorCallback2(error) {
-            console.log(error + "Hata2");
-        }
-    
+        
+
         $scope.editIdea = function (idea) {
             $scope.isUpdateSuccess = false;
             $scope.modal = idea;
@@ -155,11 +162,8 @@
                 document.getElementsByName("editStatu")[1].checked = true;
             }
         }
-
         $scope.myList = function (type) {
-
             var data = {type:type,user:$scope.loggedInUser };
-
             $http.post('/User/GetUserIdeas',data).then(successCallback, errorCallback);
             function successCallback(response) {
                 ideas = response.data;
@@ -168,7 +172,6 @@
                 }, {
                     dataset: JSON.parse(ideas)
                 });
-               
             }
             function errorCallback(error) {
                 console.log(error + "Hata ");
@@ -200,7 +203,6 @@
             var data = { ideaID: idea.ideaID };
 
             $http.post('/Idea/CloseIdea', data).then(successCallback, errorCallback);
-
             function successCallback(response) {
                 $scope.isCloseIdea = true;
                 $timeout(function () {
@@ -208,7 +210,6 @@
                     window.location.href = redirectUrl;
                 }, 3000);
             }
-
             function errorCallback(error) {
                 console.log(error + "Hata4 ");
             }

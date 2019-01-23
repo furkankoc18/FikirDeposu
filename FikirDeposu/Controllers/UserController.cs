@@ -38,10 +38,16 @@ namespace FikirDeposu.Controllers
             return View();
         }
 
-        public JsonResult GetIdeas()
+        public JsonResult GetIdeas(UserDetails user)
         {
             List<IdeaPojo> ideasPojo = new List<IdeaPojo>();
             List<Ideas> ideas = db.Ideas.Where(x=>x.status=="public" && x.isActive==true).ToList();
+            UserDetails dbUser = db.UserDetails.Where(x => x.userID == user.userID).SingleOrDefault();
+            foreach(var idea in dbUser.Ideas.ToList())
+            {
+                if(idea.isActive==true && idea.status=="private")
+                    ideas.Add(idea);
+            }
             foreach(var idea in ideas)
             {
                 IdeaPojo obj = new IdeaPojo();
@@ -65,7 +71,7 @@ namespace FikirDeposu.Controllers
         {
             if (type == "all")
             {
-                return GetIdeas();
+                return GetIdeas(user);
             }else
             {
                 List<IdeaPojo> ideasPojo = new List<IdeaPojo>();
