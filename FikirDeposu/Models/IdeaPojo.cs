@@ -13,6 +13,8 @@ namespace FikirDeposu.Models
         public DateTime? ideaDate { get; set; }
         public string description { get; set; }
         public string status { get; set; }
+        public string _event { get; set; }
+
         public bool? isActive { get; set; }
        // public bool? isRendered { get; set; }
         public DateTime? clasureDate { get; set; }

@@ -29,6 +29,7 @@ namespace FikirDeposu.Controllers
             idea.ideaDate = DateTime.Now;
             idea.number = new Random().Next(0, 100);
             idea.isActive = true;
+            idea._event = "Yeni Giriş";
             dbUser.Ideas.Add(idea);
             db.Ideas.Add(idea);
             db.SaveChanges();
@@ -36,12 +37,15 @@ namespace FikirDeposu.Controllers
             return "success";
         }
 
-        public string UpdateIdea(int ideaID,string name,string description,string status)
+        public string UpdateIdea(int ideaID,string name,string description,string status,string _event)
         {
             Ideas idea = db.Ideas.Where(x => x.ideaID == ideaID && x.isActive==true).SingleOrDefault();
             idea.name = name;
             idea.description = description;
             idea.status = status;
+            idea._event = _event;
+            if (_event == "Kapatıldı")
+                idea.isActive = false;
             db.SaveChanges();
             return "success";
         }
@@ -50,6 +54,7 @@ namespace FikirDeposu.Controllers
             Ideas idea = db.Ideas.Where(x => x.ideaID == ideaID).SingleOrDefault();
             idea.isActive = false;
             idea.clasureDate = DateTime.Now;
+            idea._event = "Kapatıldı";
             db.SaveChanges();
 
             return "success";

@@ -73,7 +73,7 @@
                                 </tr>
                                 <tr>
                                     <td>Durumu:</td>
-                                    <td><input type="text" class="form-control" /></td>
+                                    <td><input type="text" class="form-control" ng-model="modal._event" ng-disabled="modal._event==='Kapatıldı'" /></td>
                                 </tr>
                                 <tr>
                                     <td>Fikir Numarası:</td>
@@ -178,7 +178,7 @@
             }
         }
         $scope.updateIdea = function () {
-            var data = { ideaID:$scope.modal.ideaID, name: $scope.modal.name, description: $scope.modal.description, status: $scope.modal.status }
+            var data = { ideaID: $scope.modal.ideaID, name: $scope.modal.name, description: $scope.modal.description, status: $scope.modal.status, _event: $scope.modal._event }
 
             $http.post('/Idea/UpdateIdea', data).then(successCallback, errorCallback);
 

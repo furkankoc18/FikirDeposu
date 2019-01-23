@@ -1,13 +1,11 @@
 namespace FikirDeposu.Models
 {
-    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    //[JsonObject(IsReference = true)]
     public partial class Ideas
     {
         [Key]
@@ -31,6 +29,11 @@ namespace FikirDeposu.Models
         public DateTime? clasureDate { get; set; }
 
         public int? userID { get; set; }
+
+        [Column("event")]
+        [StringLength(50)]
+        public string _event { get; set; }
+
         public virtual UserDetails UserDetails { get; set; }
     }
 }
